@@ -1,0 +1,13 @@
+{
+  "name": "playwright-automation",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "cd test && npx playwright test",
+    "test:ui": "cd test && npx playwright test --ui",
+    "test:headed": "cd test && npx playwright test --headed",
+    "test:chromium": "cd test && npx playwright test --project=chromium"
+  },
+  "dependencies": {
+    "csv-parse": "^6.1.0"
+  }
+}

@@ -1,0 +1,36 @@
+GitHub Repository Link
+=======================
+
+Public Repository URL:
+https://github.com/<your-username>/playwright-swift-translator-tests
+
+Instructions:
+1. Create a new public repository on GitHub
+2. Initialize git in this project folder
+3. Push the code to GitHub
+4. Replace the URL above with your actual repository URL
+
+Git Commands to Setup:
+----------------------
+cd d:\playwright-it23653986
+git init
+git add .
+git commit -m "Initial commit: Swift Translator automation tests"
+git branch -M main
+git remote add origin https://github.com/<your-username>/playwright-swift-translator-tests.git
+git push -u origin main
+
+Repository Information:
+-----------------------
+Project Name: Swift Translator Automation Testing
+Description: Automated testing of Singlish to Sinhala translation using Playwright
+Technologies: Playwright, TypeScript, CSV Test Data
+Test Cases: 35 (24 Positive + 10 Negative + 1 UI)
+Browsers: Chromium, Firefox, WebKit
+
+Important Notes:
+---------------
+- Ensure the repository is set to PUBLIC visibility
+- Include all project files except node_modules/
+- The .gitignore file will exclude unnecessary files
+- Update this file with your actual repository URL before submission
