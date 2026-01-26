@@ -79,12 +79,12 @@ Verify all 35 test cases execute successfully across 3 browsers (105 total tests
 
 ### Step 6: Verify ZIP Contents
 Extract ZIP and verify:
-- [ ] README.md is present and complete
-- [ ] repository-link.txt has correct URL
-- [ ] data.csv contains 35 test cases
-- [ ] test/tests/translator.spec.ts is present
-- [ ] All package.json files are included
-- [ ] No node_modules/ folder (excluded by .gitignore)
+- [x] README.md is present and complete
+- [x] repository-link.txt has correct URL
+- [x] data.csv contains 35 test cases
+- [x] test/tests/translator.spec.ts is present
+- [x] All package.json files are included
+- [x] No node_modules/ folder (excluded by .gitignore)
 
 ### Step 7: Submit
 - Upload to Course Web
