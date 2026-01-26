@@ -2,7 +2,7 @@ GitHub Repository Link
 =======================
 
 Public Repository URL:
-https://github.com/<your-username>/playwright-swift-translator-tests
+https://github.com/Chenuka01/IT23653986-Playwright
 
 Instructions:
 1. Create a new public repository on GitHub
@@ -12,13 +12,14 @@ Instructions:
 
 Git Commands to Setup:
 ----------------------
-cd d:\playwright-it23653986
-git init
+✓ Repository already initialized and connected
+✓ Remote origin: https://github.com/Chenuka01/IT23653986-Playwright.git
+✓ Branch: main
+
+To push latest changes:
 git add .
-git commit -m "Initial commit: Swift Translator automation tests"
-git branch -M main
-git remote add origin https://github.com/<your-username>/playwright-swift-translator-tests.git
-git push -u origin main
+git commit -m "Update: Fixed timing issues for long input tests"
+git push origin main
 
 Repository Information:
 -----------------------

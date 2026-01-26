@@ -12,9 +12,9 @@
 
 ### 2. Git Repository Link ✓
 - [x] repository-link.txt file created
-- [ ] Update with your actual GitHub repository URL
-- [ ] Ensure repository is PUBLIC
-- [ ] Push all code to GitHub
+- [x] Update with your actual GitHub repository URL
+- [x] Ensure repository is PUBLIC
+- [x] Push all code to GitHub
 
 ### 3. Test Data File ✓
 - [x] data.csv with 35 test cases

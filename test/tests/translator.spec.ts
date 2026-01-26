@@ -52,11 +52,23 @@ test.describe('Swift Translator Automation Testing', () => {
         await inputArea.waitFor({ state: 'visible', timeout: 10000 });
         await inputArea.fill(record['Input']);
         
-        // පරිවර්තනය වන තෙක් මදක් රැඳී සිටීම
-        await page.waitForTimeout(3000); 
-
         // ප්‍රතිඵලය පරීක්ෂා කිරීම - Sinhala panel එක යටතේ තියෙන div එක
         const outputArea = page.locator('.panel-title:has-text("Sinhala")').locator('..').locator('div.whitespace-pre-wrap');
+        
+        // පරිවර්තනය වන තෙක් රැඳී සිටීම - output එක empty නැති වෙන තෙක් wait කරන්න
+        await outputArea.waitFor({ state: 'visible', timeout: 10000 });
+        
+        // Long inputs සඳහා වැඩි කාලයක් wait කරන්න
+        const inputLength = record['Input'].length;
+        const waitTime = inputLength > 250 ? 8000 : inputLength > 100 ? 5000 : 3000;
+        await page.waitForTimeout(waitTime);
+        
+        // Output එකේ content එන තෙක් wait කරන්න (empty නැති වෙන තෙක්)
+        await expect(async () => {
+          const text = await outputArea.innerText();
+          expect(text.trim().length).toBeGreaterThan(0);
+        }).toPass({ timeout: 15000, intervals: [1000] });
+        
         const actualText = await outputArea.innerText();
         
         // Log actual output for documentation
