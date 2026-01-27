@@ -16,24 +16,30 @@ interface TestRecord {
   'What is covered by the test': string;
 }
 
-// CSV file එක කියවීම
-const records = parse(fs.readFileSync(path.join(__dirname, '../data.csv')), {
-  columns: true,
-  skip_empty_lines: true
-}) as TestRecord[];
-
 test.describe('Swift Translator Automation Testing', () => {
+  // CSV file එක කියවීම - Remove BOM if present
+  const csvContent = fs.readFileSync(path.join(__dirname, '../data.csv'), 'utf8').replace(/^\uFEFF/, '');
+  const records = parse(csvContent, {
+    columns: true,
+    skip_empty_lines: true
+  }) as TestRecord[];
+
+  console.log(`Total CSV records: ${records.length}`);
 
   for (const record of records) {
+    // Get the TC ID column value
+    const tcId = record['TC ID']?.trim();
+    const input = record['Input']?.trim();
+    
     // Empty rows skip කරන්න
-    if (!record['TC ID'] || !record['Input']) {
+    if (!tcId || !input) {
       continue;
     }
 
     // UI test එකක්ද පරීක්ෂා කරන්න
-    if (record['TC ID'].includes('UI')) {
+    if (tcId.includes('UI')) {
       // UI පරීක්ෂණය සඳහා
-      test(`Testing ${record['TC ID']}: UI Visibility`, async ({ page }) => {
+      test(`Testing ${tcId}: UI Visibility`, async ({ page }) => {
         await page.goto('https://www.swifttranslator.com/');
         await page.waitForLoadState('networkidle');
         const title = page.locator('.text-lg.font-semibold:has-text("Singlish ↔ English Translator")');
@@ -41,7 +47,7 @@ test.describe('Swift Translator Automation Testing', () => {
       });
     } else {
       // Positive සහ Negative පරීක්ෂණ සඳහා
-      test(`Testing ${record['TC ID']}: ${record['Input']}`, async ({ page }) => {
+      test(`Testing ${tcId}: ${input}`, async ({ page }) => {
         await page.goto('https://www.swifttranslator.com/');
         
         // Page එක load වන තෙක් රැඳී සිටින්න
@@ -52,44 +58,46 @@ test.describe('Swift Translator Automation Testing', () => {
         await inputArea.waitFor({ state: 'visible', timeout: 10000 });
         await inputArea.fill(record['Input']);
         
-        // ප්‍රතිඵලය පරීක්ෂා කිරීම - Sinhala panel එක යටතේ තියෙන div එක
-        const outputArea = page.locator('.panel-title:has-text("Sinhala")').locator('..').locator('div.whitespace-pre-wrap');
-        
-        // පරිවර්තනය වන තෙක් රැඳී සිටීම - output එක empty නැති වෙන තෙක් wait කරන්න
-        await outputArea.waitFor({ state: 'visible', timeout: 10000 });
-        
-        // Long inputs සඳහා වැඩි කාලයක් wait කරන්න
+        // පරිවර්තනය වන තෙක් රැඳී සිටීම
         const inputLength = record['Input'].length;
         const waitTime = inputLength > 250 ? 8000 : inputLength > 100 ? 5000 : 3000;
         await page.waitForTimeout(waitTime);
         
+        // Try finding output using text content that appears after Sinhala label
+        // The output should be in a section that contains "Sinhala" text
+        const outputArea = page.locator('text=Sinhala').locator('..').locator('..').locator('div[contenteditable]').or(
+          page.locator('text=Sinhala').locator('..').locator('..').locator('textarea')
+        ).or(
+          page.locator('div:has-text("Sinhala") + div div.whitespace-pre-wrap')
+        ).first();
+        
         // Output එකේ content එන තෙක් wait කරන්න (empty නැති වෙන තෙක්)
         await expect(async () => {
-          const text = await outputArea.innerText();
-          expect(text.trim().length).toBeGreaterThan(0);
+          const text = await outputArea.textContent() || await outputArea.inputValue();
+          expect((text || '').trim().length).toBeGreaterThan(0);
         }).toPass({ timeout: 15000, intervals: [1000] });
         
-        const actualText = await outputArea.innerText();
+        const actualText = (await outputArea.textContent() || await outputArea.inputValue() || '').trim();
         
         // Log actual output for documentation
         console.log(`Test Case: ${record['TC ID']}`);
         console.log(`Input: ${record['Input']}`);
-        console.log(`Actual Output: ${actualText.trim()}`);
+        console.log(`Actual Output: ${actualText}`);
         console.log(`Expected Output: ${record['Expected output']}`);
         console.log(`Status: ${record['Status']}`);
         console.log('---');
         
         // Output එක empty නැති බව verify කරන්න
-        expect(actualText.trim().length).toBeGreaterThan(0);
+        expect(actualText.length).toBeGreaterThan(0);
         
         // For negative tests, just verify that translation happened
         // For positive tests, verify output is not empty
         if (record['TC ID'].includes('Neg')) {
           // Negative test - translation විය යුතුයි (empty නොවිය යුතුයි)
-          expect(actualText.trim()).toBeTruthy();
+          expect(actualText).toBeTruthy();
         } else {
           // Positive test - valid Sinhala output විය යුතුයි
-          expect(actualText.trim()).toBeTruthy();
+          expect(actualText).toBeTruthy();
         }
       });
     }
