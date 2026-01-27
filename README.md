@@ -4,7 +4,7 @@
 This project contains automated tests for the Swift Translator web application (https://www.swifttranslator.com/) using Playwright framework. The tests validate Singlish to Sinhala translation functionality across multiple browsers.
 
 ## Test Coverage
-- **Total Test Cases**: 35
+- **Total Test Cases**: 37 (35 CSV tests + 2 example tests)
 - **Positive Functional Tests**: 24
 - **Negative Functional Tests**: 10
 - **UI Tests**: 1
@@ -31,12 +31,13 @@ This project contains automated tests for the Swift Translator web application (
 
 ## Project Structure
 ```
-playwright-it23653986/
+IT23653986-Playwright/
 ├── test/
 │   ├── tests/
-│   │   ├── translator.spec.ts    # Main test file
+│   │   ├── translator.spec.ts    # Main test file (CSV-driven tests)
 │   │   └── example.spec.ts       # Playwright default example
 │   ├── data.csv                  # Test data (35 test cases)
+│   ├── check-csv.js              # CSV validation script
 │   ├── playwright.config.ts      # Playwright configuration
 │   ├── package.json              # Dependencies
 │   └── tsconfig.json             # TypeScript configuration
@@ -48,6 +49,7 @@ playwright-it23653986/
 - **Testing Framework**: Playwright (v1.58.0)
 - **Language**: TypeScript
 - **Test Data**: CSV file with 35 test cases
+- **CSV Parser**: csv-parse (v6.1.0)
 - **Browsers**: Chromium, Firefox, WebKit
 
 ## Prerequisites
@@ -64,12 +66,14 @@ cd playwright-it23653986
 
 ### 2. Install Dependencies
 ```bash
-# Install root dependencies
-npm install
-
 # Install test dependencies
 cd test
 npm install
+
+# This installs:
+# - @playwright/test
+# - csv-parse
+# - @types/node
 ```
 
 ### 3. Install Playwright Browsers
@@ -169,18 +173,18 @@ The test data is stored in `test/data.csv` with the following columns:
 - Each test logs: Test ID, Input, Actual Output, Expected Output, Status
 
 ## Known Issues
-- CSV file encoding: Expected output column contains encoding issues (??? characters)
-- Current tests validate output presence rather than exact match
-- Consider re-saving CSV with UTF-8 BOM encoding for proper Sinhala character support
+- ~~CSV file encoding: BOM issue~~ ✅ **FIXED** - Code now automatically removes BOM before parsing
+- Translation output echoes input instead of translating (translator may not be working as expected)
+- Tests validate output presence rather than exact translation match
 
 ## Test Execution Summary
 
 ### Expected Results
-- **Total Tests**: 105 (35 test cases × 3 browsers)
+- **Total Tests**: 111 (37 test cases × 3 browsers)
 - **Browser Coverage**: 
-  - Chromium: 35 tests
-  - Firefox: 35 tests
-  - WebKit: 35 tests
+  - Chromium: 37 tests
+  - Firefox: 37 tests
+  - WebKit: 37 tests
 
 ### Success Criteria
 - All tests should execute successfully
@@ -215,7 +219,8 @@ The test data is stored in `test/data.csv` with the following columns:
 - Verify website is accessible
 
 ### CSV Encoding Issues
-- Re-save CSV with UTF-8 BOM encoding
+- ✅ BOM encoding is handled automatically by the test code
+- CSV file contains UTF-8 BOM which is stripped during parsing
 - Use Excel or Google Sheets to edit
 - Ensure proper Sinhala font support
 
