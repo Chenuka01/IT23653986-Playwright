@@ -32,18 +32,28 @@ This project contains automated tests for the Swift Translator web application (
 ## Project Structure
 ```
 IT23653986-Playwright/
-├── test/
-│   ├── tests/
-│   │   ├── translator.spec.ts    # Main test file (CSV-driven tests)
-│   │   └── example.spec.ts       # Playwright default example
+├── test/                         # All test code, data, and test artifacts
+│   ├── tests/                    # Test suite files
+│   │   ├── translator.spec.ts    # CSV-driven translation tests; writes `test-summary.json`
+│   │   ├── inspect-dom.spec.ts   # DOM inspection / UI helper tests
+│   │   └── test-csv-import.mjs   # ESM helper to import/validate CSV data
 │   ├── data.csv                  # Test data (35 test cases)
-│   ├── check-csv.js              # CSV validation script
-│   ├── playwright.config.ts      # Playwright configuration
-│   ├── package.json              # Dependencies
-│   └── tsconfig.json             # TypeScript configuration
-├── package.json                  # Root package.json
-└── README.md                     # This file
+│   ├── check-csv.js              # CSV validation / quick validators (Node.js)
+│   ├── generate-summary-pdf.mjs  # Script to create HTML + PDF from test-summary.json
+│   ├── test-summary.json         # Generated test summary (written by tests)
+│   ├── playwright.config.ts      # Playwright configuration and projects
+│   ├── package.json              # Test-level npm scripts & dependencies
+│   ├── tsconfig.json             # TypeScript config for tests
+│   ├── playwright-report/        # HTML test report output
+│   └── test-results/             # Raw artifacts (screenshots, videos, traces)
+├── package.json                  # Root project metadata & scripts
+├── README.md                     # This file (project documentation)
+├── repository-link.txt           # Repository link for assignment submission
+├── SUBMISSION-CHECKLIST.md       # Assignment submission checklist
+└── SUBMISSION-READY.md           # Notes & evidence for submission
 ```
+
+**Notes:** The `test/` directory contains the test implementation and all artifacts produced by running tests (reports, screenshots, PDF summary). Run tests from the `test` folder (e.g., `cd test && npx playwright test`).
 
 ## Technologies Used
 - **Testing Framework**: Playwright (v1.58.0)
@@ -55,6 +65,27 @@ IT23653986-Playwright/
 ## Prerequisites
 - Node.js (v16 or higher)
 - npm (v7 or higher)
+
+# Special notice = # Chromium only - this method is useful to get Actual output and Status and to generate a test summary
+```bash
+# Run CSV-driven tests and UI test (Chromium project) - collects actual output/status into `test-summary.json`
+npx playwright test --grep "Pos_Fun_|Neg_Fun_|Pos_UI_" --project=chromium
+```
+
+# Generate PDF summary of CSV test results
+```bash
+# After running the Chromium CSV tests (above), generate a PDF report from the produced `test-summary.json`:
+cd test
+npm run summary:pdf
+```
+
+# Run the UI test in a visible browser
+```bash
+cd test
+npm run test:ui-visible
+# or
+npx playwright test --project=chromium-ui --grep "@ui"
+```
 
 ## Installation
 
@@ -104,7 +135,7 @@ npx playwright test --ui
 
 ### Run Tests for Specific Browser
 ```bash
-# Chromium only
+# Chromium only- this method use is very help for get Actual output,status
 cd test
 npx playwright test --project=chromium
 
@@ -140,13 +171,18 @@ The test data is stored in `test/data.csv` with the following columns:
 
 ### Playwright Configuration (`test/playwright.config.ts`)
 - **Browsers**: Chromium, Firefox, WebKit
-- **Parallel Execution**: Enabled (6 workers)
-- **Timeout**: 60 seconds per test (increased for cross-browser compatibility)
+- **Parallel Execution**: Reduced (1 worker by default) — we run tests sequentially to avoid overwhelming the translation service
+- **Timeout**: 120 seconds per test (increased for long inputs and slow translations)
+- **Headless**: Tests run headless by default; a special `chromium-ui` project runs the UI test in a visible (headed) browser
 - **Base URL**: https://www.swifttranslator.com/
 - **Screenshots**: On failure
 - **Video**: On first retry
 - **Trace**: On first retry
-- **Retry Logic**: Built-in automatic retries for slow translations
+- **Retry Logic**: Built-in automatic retries for slow translations (configurable in the test code)
+
+Notes:
+- The `chromium-ui` project enables a visible browser with `slowMo` for the single `@ui` test (`Pos_UI_0001`).
+- Use the npm script `npm run test:ui-visible` to run the UI test in a visible browser, or `npx playwright test --project=chromium-ui --grep "@ui"`.
 
 ## Test Features
 
@@ -176,26 +212,36 @@ The test data is stored in `test/data.csv` with the following columns:
 
 ### ✅ SUBMISSION READY - All Requirements Met
 
-**Test Execution Evidence:**
-```
-Running 111 tests using 6 workers
-  111 passed (2.0m)
-  
-✅ Pass Rate: 100%
-✅ Browsers: Chromium, Firefox, WebKit
-✅ CSV Status Tracking: Working correctly
+**Test Execution Evidence (how to reproduce current results):**
+
+> Note: Test results can change depending on when you run them (network, service latency, browser versions). Use the commands below to reproduce a fresh test run and generate an up-to-date PDF summary.
+
+```bash
+# Run CSV-driven tests + UI test in Chromium and generate a summary JSON (local machine)
+cd test
+npx playwright test --grep "Pos_Fun_|Neg_Fun_|Pos_UI_" --project=chromium
+# This run will create/overwrite `test/test-summary.json` which contains the 35 CSV test results
+
+# Generate a PDF from the summary JSON
+npm run summary:pdf
+# Output: test/test-summary.pdf
 ```
 
-**CSV Status Verification:**
-- Positive tests (Pos_Fun_*): Status = "Pass" ✅
-- Negative tests (Neg_Fun_*): Status = "Fail" ✅ (Expected)
-- UI tests (Pos_UI_*): Status = "Pass" ✅
+**CSV Status Verification (static definitions):**
+- Positive tests (Pos_Fun_*): expected status = "Pass" ✅
+- Negative tests (Neg_Fun_*): expected status = "Fail" ✅ (intentional negative tests)
+- UI tests (Pos_UI_*): expected status = "Pass" ✅
 
-**Test Results Summary:**
+**Current Test Counts (stable):**
 - Total test cases in CSV: 35
-- Tests executed per browser: 37 (35 CSV + 2 examples)
-- Total executions: 111 (37 × 3 browsers)
-- Success rate: 100%
+- Additional example tests: 2
+- Total distinct tests in project: 37
+
+**How to get the latest test results summary**
+- Run the Chromium command above to produce `test/test-summary.json`.
+- Then run `npm run summary:pdf` to create `test/test-summary.pdf` (PDF contains Actual values and Status).
+
+> If you want, I can run the Chromium tests and generate `test-summary.pdf` now and attach the PDF for submission.
 
 This demonstrates that the Playwright automation framework is correctly:
 1. Reading test data from CSV file

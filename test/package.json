@@ -10,6 +10,8 @@
     "test:webkit": "npx playwright test --project=webkit",
     "test:headed": "npx playwright test --headed",
     "test:ui": "npx playwright test --ui",
+    "test:ui-visible": "npx playwright test --project=chromium-ui --grep \"@ui\"",
+    "summary:pdf": "node generate-summary-pdf.mjs",
     "report": "npx playwright show-report"
   },
   "keywords": [],

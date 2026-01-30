@@ -20,11 +20,11 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1, // Run tests sequentially to avoid overwhelming translation service
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Timeout for each test */
-  timeout: 60000, // 60 seconds per test
+  timeout: 120000, // 120 seconds per test (increased for long inputs)
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
@@ -32,23 +32,41 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    
+    /* Run tests in headless mode by default (no browser window) */
+    headless: true,
   },
 
   /* Configure projects for major browsers */
   projects: [
+    // Chromium for functional tests (headless)
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], headless: true },
+      testMatch: /.*\.spec\.ts/,
+      testIgnore: /.*ui.*\.spec\.ts/,
+    },
+
+    // Chromium for UI tests (visible browser with slow motion)
+    {
+      name: 'chromium-ui',
+      use: { 
+        ...devices['Desktop Chrome'], 
+        headless: false,
+        launchOptions: { slowMo: 300 }
+      },
+      testMatch: /.*\.spec\.ts/,
+      grep: /@ui/,
     },
 
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: { ...devices['Desktop Firefox'], headless: true },
     },
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { ...devices['Desktop Safari'], headless: true },
     },
 
     /* Test against mobile viewports. */

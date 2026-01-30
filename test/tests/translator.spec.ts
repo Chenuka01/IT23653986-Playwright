@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
+// Sanity edit: harmless comment to prompt TS server to refresh diagnostics
 import fs from 'fs';
 import path from 'path';
 import { parse } from 'csv-parse/sync';
-import { stringify } from 'csv-stringify/sync';
 
 // Define the type for CSV records
 interface TestRecord {
@@ -17,10 +17,18 @@ interface TestRecord {
   'What is covered by the test': string;
 }
 
-// Store actual outputs globally
-const actualOutputs: Map<string, string> = new Map();
-
 test.describe('Swift Translator Automation Testing', () => {
+  // Collect summary of CSV test results for PDF export
+  interface TestResultSummary {
+    tcId: string;
+    testName: string;
+    input: string;
+    expected: string;
+    actual: string;
+    status: 'PASS' | 'FAIL' | 'NOT TRANSLATED';
+    match: boolean;
+  }
+  const summaryResults: TestResultSummary[] = [];
   // CSV file එක කියවීම - Remove BOM if present
   const csvFilePath = path.join(__dirname, '../data.csv');
   const csvContent = fs.readFileSync(csvFilePath, 'utf8').replace(/^\uFEFF/, '');
@@ -31,20 +39,17 @@ test.describe('Swift Translator Automation Testing', () => {
 
   console.log(`Total CSV records: ${records.length}`);
 
-  for (const record of records) {
-    // Get the TC ID column value
-    const tcId = record['TC ID']?.trim();
-    const input = record['Input']?.trim();
-    
-    // Empty rows skip කරන්න
-    if (!tcId || !input) {
-      continue;
-    }
+  // UI Tests - Browser visible with slow motion
+  test.describe('UI Tests (Visible Browser)', () => {
+    for (const record of records) {
+      const tcId = record['TC ID']?.trim();
+      const input = record['Input']?.trim();
+      
+      if (!tcId || !input || !tcId.includes('UI')) {
+        continue;
+      }
 
-    // UI test එකක්ද පරීක්ෂා කරන්න
-    if (tcId.includes('UI')) {
-      // UI පරීක්ෂණය සඳහා - Real-time translation test
-      test(`${tcId}: ${record['Test case name']}`, async ({ page }) => {
+      test(`${tcId}: ${record['Test case name']} @ui`, async ({ page }) => {
         await page.goto('https://www.swifttranslator.com/');
         await page.waitForLoadState('networkidle');
         
@@ -64,17 +69,27 @@ test.describe('Swift Translator Automation Testing', () => {
         // Type slowly to test real-time conversion
         await inputArea.pressSequentially(input, { delay: 100 });
         
-        // Wait for translation
-        const baseWaitTime = Math.min(Math.max(input.length * 10, 1000), 4000);
-        await page.waitForTimeout(baseWaitTime);
+        // Wait for translation to start
+        await page.waitForTimeout(3000);
         
-        // Get output
+        // Get output with retry logic
         const outputDiv = page.locator('div.bg-slate-50.whitespace-pre-wrap');
-        await expect(outputDiv).not.toBeEmpty({ timeout: 15000 }).catch(() => {});
-        const actualText = (await outputDiv.textContent() || '').trim();
         
-        // Store output
-        actualOutputs.set(tcId, actualText);
+        // Retry to get output if empty
+        let actualText = '';
+        let maxRetries = 5;
+        let retryWaitTime = 2000;
+        
+        for (let attempt = 0; attempt < maxRetries; attempt++) {
+          actualText = (await outputDiv.textContent() || '').trim();
+          if (actualText) {
+            break; // Got output, exit retry loop
+          }
+          // Wait before next retry
+          if (attempt < maxRetries - 1) {
+            await page.waitForTimeout(retryWaitTime);
+          }
+        }
         
         console.log(`Actual: ${actualText}`);
         
@@ -86,8 +101,31 @@ test.describe('Swift Translator Automation Testing', () => {
         const match = actualText.includes(expectedOutput) || expectedOutput.includes(actualText);
         console.log(`Match: ${match ? '✅ PASS' : '❌ FAIL'}`);
         console.log('==================================================\n');
+
+        // Add to summary
+        summaryResults.push({
+          tcId: tcId,
+          testName: record['Test case name'],
+          input: input,
+          expected: expectedOutput,
+          actual: actualText,
+          status: match ? 'PASS' : isTranslated ? 'FAIL' : 'NOT TRANSLATED',
+          match: !!match
+        });
       });
-    } else {
+    }
+  });
+
+  // Functional Tests - Headless mode
+  test.describe('Functional Tests (Headless)', () => {
+    for (const record of records) {
+      const tcId = record['TC ID']?.trim();
+      const input = record['Input']?.trim();
+      
+      if (!tcId || !input || tcId.includes('UI')) {
+        continue;
+      }
+
       // Positive සහ Negative පරීක්ෂණ සඳහා
       test(`${tcId}: ${input.substring(0, 50)}...`, async ({ page, browserName }) => {
         // Navigate to translator
@@ -107,7 +145,7 @@ test.describe('Swift Translator Automation Testing', () => {
         
         // Calculate appropriate wait time based on input length and browser
         const inputLength = record['Input'].length;
-        let baseWaitTime = inputLength > 250 ? 8000 : inputLength > 100 ? 5000 : 3000;
+        let baseWaitTime = inputLength > 250 ? 15000 : inputLength > 100 ? 10000 : 8000;
         
         // Firefox and WebKit need more time
         if (browserName === 'firefox' || browserName === 'webkit') {
@@ -128,20 +166,19 @@ test.describe('Swift Translator Automation Testing', () => {
         
         // Try to get output with retry logic - increased retries and wait time
         let actualText = '';
-        let maxRetries = 5; // Increased from 3 to 5
-        let retryWaitTime = browserName === 'webkit' ? 3000 : 2000; // Longer wait for WebKit
+        let maxRetries = 12; // Increased to 12 retries
+        let retryWaitTime = browserName === 'webkit' ? 6000 : 5000; // Even longer waits (5-6s)
         
-        while (maxRetries > 0 && !actualText) {
+        for (let attempt = 0; attempt < maxRetries; attempt++) {
           actualText = (await outputDiv.textContent() || '').trim();
-          if (!actualText && maxRetries > 0) {
-            // Silent retry - waiting for translation to complete
+          if (actualText) {
+            break; // Got output, exit retry loop
+          }
+          // Wait before next retry
+          if (attempt < maxRetries - 1) {
             await page.waitForTimeout(retryWaitTime);
-            maxRetries--;
           }
         }
-        
-        // Store actual output for CSV update
-        actualOutputs.set(record['TC ID'], actualText);
         
         // Enhanced logging
         console.log(`\n${'='.repeat(50)}`);
@@ -154,6 +191,17 @@ test.describe('Swift Translator Automation Testing', () => {
         console.log(`Match: ${actualText === record['Expected output'] ? '✅ PASS' : '❌ FAIL'}`);
         console.log(`${'='.repeat(50)}\n`);
         
+        // Add to summary
+        summaryResults.push({
+          tcId: record['TC ID'],
+          testName: record['Test case name'],
+          input: record['Input'],
+          expected: record['Expected output'],
+          actual: actualText,
+          status: actualText === record['Expected output'] ? 'PASS' : actualText ? 'FAIL' : 'NOT TRANSLATED',
+          match: actualText === record['Expected output']
+        });
+        
         // Verify output is not empty (skip assertion if translation service is down)
         if (!actualText) {
           console.log('⚠️ WARNING: Empty output - translation service may be unavailable');
@@ -163,49 +211,16 @@ test.describe('Swift Translator Automation Testing', () => {
         // The CSV will show the actual vs expected for manual review
       });
     }
-  }
+  });
 
-  // After all tests complete, update CSV file with actual outputs
+  // After all tests complete, write a JSON summary for PDF generation
   test.afterAll(async () => {
-    if (actualOutputs.size > 0) {
-      console.log(`\n📝 Updating CSV file with ${actualOutputs.size} actual outputs...`);
-      
-      // Read the CSV again to get all rows including empty ones
-      const fullCsvContent = fs.readFileSync(csvFilePath, 'utf8').replace(/^\uFEFF/, '');
-      const allRecords = parse(fullCsvContent, {
-        columns: true,
-        skip_empty_lines: false,
-        relax_column_count: true
-      }) as TestRecord[];
-      
-      // Update records with actual outputs
-      let updatedCount = 0;
-      for (const record of allRecords) {
-        const tcId = record['TC ID']?.trim();
-        if (tcId && actualOutputs.has(tcId)) {
-          record['Actual output'] = actualOutputs.get(tcId) || '';
-          updatedCount++;
-        }
-      }
-      
-      // Write updated CSV back to file
-      const updatedCsv = stringify(allRecords, {
-        header: true,
-        columns: [
-          'TC ID',
-          'Test case name',
-          'Input length type',
-          'Input',
-          'Expected output',
-          'Actual output',
-          'Status',
-          'Accuracy justification/ Description of issue type',
-          'What is covered by the test'
-        ]
-      });
-      
-      fs.writeFileSync(csvFilePath, updatedCsv, 'utf8');
-      console.log(`✅ CSV file updated successfully! (${updatedCount} records updated)\n`);
+    if (summaryResults.length > 0) {
+      const summaryPath = path.join(__dirname, '../test-summary.json');
+      fs.writeFileSync(summaryPath, JSON.stringify(summaryResults, null, 2), 'utf8');
+      console.log(`\n📝 Test summary written to ${summaryPath} (${summaryResults.length} records)\n`);
+    } else {
+      console.log('\n⚠️ No test summary results were collected.');
     }
   });
 });

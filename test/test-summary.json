@@ -1,0 +1,317 @@
+[
+  {
+    "tcId": "Pos_UI_0001",
+    "testName": "Sinhala output updates automatically for short phrase",
+    "input": "nil paata karanavaa",
+    "expected": "Sinhala output should update automatically while typing and display: නිල් පාට කරනවා",
+    "actual": "නිල් පාට කරනවා",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0001",
+    "testName": "Simple sentence with English technical term",
+    "input": "mama adha Java panthi yanavaa.",
+    "expected": "මම අද Java පන්ති යනවා.",
+    "actual": "මම අද Java පන්ති යනවා.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0002",
+    "testName": "Compound sentence with English noun",
+    "input": "adha hoDHatama vahinna yanavaa ee nisaa mama taxi ekaka yanavaa.",
+    "expected": "අද හොඳටම වහින්න යනවා ඒ නිසා මම taxi එකක යනවා.",
+    "actual": "අද හොඳටම වහින්න යනවා ඒ නිසා මම taxi එකක යනවා.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0003",
+    "testName": "Complex sentence with date and conditional form",
+    "input": "oyaa June 5 assignment eka submit kaloth mama udhav karannam.",
+    "expected": "ඔයා June 5 assignment එක submit කලොත් මම උදව් කරන්නම්.",
+    "actual": "ඔයා June 5 assignment එක submit කලොත් මම උදව් කරන්නම්.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0004",
+    "testName": "Interrogative sentence regarding food preference",
+    "input": "oyaa koththu kanna aasadha?",
+    "expected": "ඔයා කොත්තු කන්න ආසද?",
+    "actual": "ඔයා කොත්තු කන්න ආසද?",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0005",
+    "testName": "Imperative command with English technical term",
+    "input": "meeka oyaa restart karanna.",
+    "expected": "මේක ඔයා restart කරන්න.",
+    "actual": "මේක ඔයා restart කරන්න.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0006",
+    "testName": "Future tense suggestion with English word",
+    "input": "api labana sathiyee vagee trip eka yamu.",
+    "expected": "අපි ලබන සතියේ වගේ trip එක යමු.",
+    "actual": "අපි ලබන සතියේ වගේ trip එක යමු.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0007",
+    "testName": "Negative sentence with English technical term",
+    "input": "mata code eka liyanna baee.",
+    "expected": "මට code එක ලියන්න බෑ.",
+    "actual": "මට code එක ලියන්න බෑ.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0008",
+    "testName": "Polite request with English noun",
+    "input": "karuNaakara mata pen eka dhenna puLuvandha?",
+    "expected": "කරුණාකර මට pen එක දෙන්න පුළුවන්ද?",
+    "actual": "කරුණාකර මට pen එක දෙන්න පුළුවන්ද?",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0009",
+    "testName": "Informal question with slang",
+    "input": "adoo oyaa kohedha yanne ?",
+    "expected": "අඩෝ ඔයා කොහෙද යන්නෙ ?",
+    "actual": "අඩෝ ඔයා කොහෙද යන්නෙ ?",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0010",
+    "testName": "Simple sentence with brand name and number",
+    "input": "mama aluth ASUS ROG Phone 9 ekak gannavaa.",
+    "expected": "මම අලුත් ASUS ROG Phone 9 එකක් ගන්නවා.",
+    "actual": "මම අලුත් ASUS ROG Phone 9 එකක් ගන්නවා.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0011",
+    "testName": "Simple sentence with date format",
+    "input": "meeting eka 2026-03-11 thiyenavaa.",
+    "expected": "meeting එක 2026-03-11 තියෙනවා.",
+    "actual": "meeting එක 2026-03-11 තියෙනවා.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0012",
+    "testName": "Simple sentence with currency format",
+    "input": "meekata Rs. 25000 k yanavaa.",
+    "expected": "මේකට Rs. 25000 ක් යනවා.",
+    "actual": "මේකට Rs. 25000 ක් යනවා.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0013",
+    "testName": "Informal exclamation with question",
+    "input": "ayiyoo! mokakdha vunee?",
+    "expected": "අයියෝ! මොකක්ද වුනේ?",
+    "actual": "අයියෝ! මොකක්ද වුනේ?",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0014",
+    "testName": "Long paragraph with mixed English describing a city",
+    "input": "Gampaha kiyanne mata hari lassanama hodha minisun inna haa inna hithena loku nagarayak. udhaesana bus ekata naegalaa school yanna, evening velaa friends ekka park ekee idhalaa kathaa karanna, weekend vala  gihin shopping karanna puLuvan vageema  memories pirichcha place ekak. Mee nagare jivithaya simple vunath hari lassanayi, hodha sathuta laebena thaenak.",
+    "expected": "Gampaha කියන්නෙ මට හරි ලස්සනම හොද මිනිසුන් ඉන්න හා ඉන්න හිතෙන ලොකු නගරයක්. උදැසන bus එකට නැගලා school යන්න, evening වෙලා friends එක්ක park එකේ ඉදලා කතා කරන්න, weekend වල  ගිහින් shopping කරන්න පුළුවන් වගේම  memories පිරිච්ච place එකක්. මේ නගරෙ ජිවිතය simple වුනත් හරි ලස්සනයි, හොද සතුට ලැබෙන තැනක්.",
+    "actual": "Gampaha කියන්නෙ මට හරි ලස්සනම හොද මිනිසුන් ඉන්න හා ඉන්න හිතෙන ලොකු නගරයක්. උදැසන bus එකට නැගලා school යන්න, evening වෙලා friends එක්ක park එකේ ඉදලා කතා කරන්න, weekend වල  ගිහින් shopping කරන්න පුළුවන් වගේම  memories පිරිච්ච place එකක්. මේ නගරෙ ජිවිතය simple වුනත් හරි ලස්සනයි, හොද සතුට ලැබෙන තැනක්.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0015",
+    "testName": "Compound sentence with multiple technical terms and uppercase",
+    "input": "mama server eka fix karalaa, CONFIG karalaa database eka connect kalaa.",
+    "expected": "මම server එක fix කරලා, CONFIG කරලා database එක connect කලා.",
+    "actual": "මම server එක fix කරලා, CONFIG කරලා database එක connect කලා.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0016",
+    "testName": "Daily greeting with punctuation",
+    "input": "suba udhaeesanak magee yaaluvane!",
+    "expected": "සුබ උදෑසනක් මගේ යාලුවනෙ!",
+    "actual": "සුබ උදෑසනක් මගේ යාලුවනෙ!",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0017",
+    "testName": "Multi-line input test",
+    "input": "mama potha kiyavanavaa.\nheta kathaa karamu nedha?",
+    "expected": "මම පොත කියවනවා.\nහෙට කතා කරමු නේද?",
+    "actual": "මම පොත කියවනවා.\nහෙට කතා කරමු නේද?",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0018",
+    "testName": "Simple sentence with plural pronoun",
+    "input": "api okkoma cinema ekata yanavaa.",
+    "expected": "අපි ඔක්කොම cinema එකට යනවා.",
+    "actual": "අපි ඔක්කොම cinema එකට යනවා.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0019",
+    "testName": "Past tense sentence with time reference",
+    "input": "eyaa iiyee raee tikak velaa vaeda kaLaa.",
+    "expected": "එයා ඊයේ රෑ ටිකක් වෙලා වැඩ කළා.",
+    "actual": "එයා ඊයේ රෑ ටිකක් වෙලා වැඩ කළා.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0020",
+    "testName": "Repeated word expression for emphasis",
+    "input": "hari hari mama ennam.",
+    "expected": "හරි හරි මම එන්නම්.",
+    "actual": "හරි හරි මම එන්නම්.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0021",
+    "testName": "Imperative command with unit of measurement",
+    "input": "mata haal 1Kg geenna.",
+    "expected": "මට හාල් 1Kg ගේන්න.",
+    "actual": "මට හාල් 1Kg ගේන්න.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0022",
+    "testName": "Sentence with English place names",
+    "input": "api Colombo vala Port City ekata yanavaa.",
+    "expected": "අපි Colombo වල Port City එකට යනවා.",
+    "actual": "අපි Colombo වල Port City එකට යනවා.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0023",
+    "testName": "Mixed language sentence with English banking term",
+    "input": "magee Debit card eka naethi vunaa.",
+    "expected": "මගේ Debit card එක නැති වුනා.",
+    "actual": "මගේ Debit card එක නැති වුනා.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Pos_Fun_0024",
+    "testName": "Short positive response",
+    "input": "ov, mata puLuvan.",
+    "expected": "ඔව්, මට පුළුවන්.",
+    "actual": "ඔව්, මට පුළුවන්.",
+    "status": "PASS",
+    "match": true
+  },
+  {
+    "tcId": "Neg_Fun_0001",
+    "testName": "Mixed language proper noun failure",
+    "input": "Sri Lanka cricket team eka dhinnaa.",
+    "expected": "Sri Lanka cricket team එක දින්නා.",
+    "actual": "ස්‍රි Lanka cricket team එක දින්නා.",
+    "status": "FAIL",
+    "match": false
+  },
+  {
+    "tcId": "Neg_Fun_0002",
+    "testName": "Brand name transliteration failure",
+    "input": "iPhone 17 pro max 1k gamu.",
+    "expected": "iPhone 17 pro max 1ක් ගමු.",
+    "actual": "ඉඵ්හොනෙ 17 pro max 1ක් ගමු.",
+    "status": "FAIL",
+    "match": false
+  },
+  {
+    "tcId": "Neg_Fun_0003",
+    "testName": "English technical term preservation failure",
+    "input": "Pendrive eka dhenna.",
+    "expected": "Pendrive එක දෙන්න.",
+    "actual": "ඵෙන්ඩ්‍රිවෙ එක දෙන්න.",
+    "status": "FAIL",
+    "match": false
+  },
+  {
+    "tcId": "Neg_Fun_0004",
+    "testName": "Preservation of email address format",
+    "input": "testusernew@gmail.com",
+    "expected": "testusernew@gmail.com",
+    "actual": "ටෙස්ටුසෙර්නෙw@gmail.com",
+    "status": "FAIL",
+    "match": false
+  },
+  {
+    "tcId": "Neg_Fun_0005",
+    "testName": "Failure to preserve English technical term \"Touchpad\"",
+    "input": "Singlish Touchpad use karanna.",
+    "expected": "සින්ග්ලිශ් Touchpad use කරන්න.",
+    "actual": "සින්ග්ලිශ් ඨොඋච්පඩ් use කරන්න.",
+    "status": "FAIL",
+    "match": false
+  },
+  {
+    "tcId": "Neg_Fun_0006",
+    "testName": "Failure to preserve specific English fashion terms",
+    "input": "bodycon dress eka girl kenekta lassanayi.",
+    "expected": "bodycon dress එක girl කෙනෙක්ට ලස්සනයි.",
+    "actual": "බොඩ්යcඔන් dress එක girl කෙනෙක්ට ලස්සනයි.",
+    "status": "FAIL",
+    "match": false
+  },
+  {
+    "tcId": "Neg_Fun_0007",
+    "testName": "Mixed language brand name retention",
+    "input": "ASUS Vivobook laptop ekak gamudha?",
+    "expected": "ASUS Vivobook laptop එකක් ගමුද?",
+    "actual": "ASUS Vඉවොබෝක් laptop එකක් ගමුද?",
+    "status": "FAIL",
+    "match": false
+  },
+  {
+    "tcId": "Neg_Fun_0008",
+    "testName": "URL recognition failure",
+    "input": "https://www.swifttranslatornew0001.com",
+    "expected": "https://www.swifttranslatornew0001.com",
+    "actual": "හ්ට්ට්ප්ස්://www.සwඉෆ්ට්ට්‍රන්ස්ලටොර්නෙw0001.com",
+    "status": "FAIL",
+    "match": false
+  },
+  {
+    "tcId": "Neg_Fun_0009",
+    "testName": "Mixed language with unrecognized brand name",
+    "input": "Chatgpt vaeda valata godak help karanavaa.",
+    "expected": "Chatgpt වැඩ වලට ගොඩක් help කරනවා.",
+    "actual": "ඡට්ග්ප්ට් වැඩ වලට ගොඩක් help කරනවා.",
+    "status": "FAIL",
+    "match": false
+  },
+  {
+    "tcId": "Neg_Fun_0010",
+    "testName": "Mixed language with English Brand Name failure",
+    "input": "GitHub udhav karanavaa Software develop karanna.",
+    "expected": "GitHub උදව් කරනවා Software develop කරන්න.",
+    "actual": "ඟිට්හුබ් උදව් කරනවා Software develop කරන්න.",
+    "status": "FAIL",
+    "match": false
+  }
+]
